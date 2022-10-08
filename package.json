@@ -1,0 +1,66 @@
+{
+	"$schema": "https://www.raycast.com/schemas/extension.json",
+	"name": "markdown-notes",
+	"title": "Markdown Notes",
+	"description": "Create, browse and edit your Markdown notes",
+	"icon": "command-icon.png",
+	"author": "pyronaur",
+	"categories": [
+		"Productivity"
+	],
+	"license": "MIT",
+	"commands": [
+		{
+			"name": "manage-posts",
+			"title": "Markdown Posts",
+			"description": "Create, browse and edit your Markdown notes",
+			"mode": "view"
+		},
+		{
+			"name": "new-post",
+			"title": "New Markdown Post",
+			"description": "Create a new Markdown note",
+			"mode": "view"
+		}
+	],
+	"preferences": [
+		{
+			"name": "draftsPath",
+			"title": "Drafts Path",
+			"description": "Path to the folder where your drafts are stored",
+			"type": "textfield",
+			"required": true,
+			"placeholder": "e.g. ~/Documents/Blog/Drafts"
+		},
+		{
+			"name": "contentPath",
+			"title": "Content Path",
+			"description": "Path to the folder where your content is stored",
+			"type": "textfield",
+			"required": true,
+			"placeholder": "e.g. ~/Documents/Blog/Content"
+		}
+	],
+	"dependencies": {
+		"@raycast/api": "^1.40.3",
+		"@raycast/utils": "^1.4.8",
+		"globby": "^13.1.2"
+	},
+	"devDependencies": {
+		"@types/node": "16.10.3",
+		"@types/react": "18.0.9",
+		"@typescript-eslint/eslint-plugin": "^5.0.0",
+		"@typescript-eslint/parser": "^5.0.0",
+		"eslint": "^7.32.0",
+		"eslint-config-prettier": "^8.3.0",
+		"prettier": "^2.5.1",
+		"typescript": "^4.4.3"
+	},
+	"scripts": {
+		"build": "ray build -e dist",
+		"dev": "ray develop",
+		"fix-lint": "ray lint --fix",
+		"lint": "ray lint",
+		"publish": "ray publish"
+	}
+}
