@@ -1,8 +1,8 @@
 {
 	"$schema": "https://www.raycast.com/schemas/extension.json",
-	"name": "markdown-notes",
-	"title": "Markdown Notes",
-	"description": "Create, browse and edit your Markdown notes",
+	"name": "markdown-blog",
+	"title": "Markdown Blog",
+	"description": "Create, browse and edit your Markdown blog",
 	"icon": "command-icon.png",
 	"author": "pyronaur",
 	"categories": [
@@ -13,7 +13,7 @@
 		{
 			"name": "manage-posts",
 			"title": "Markdown Posts",
-			"description": "Create, browse and edit your Markdown notes",
+			"description": "Create, browse and edit your Markdown blog",
 			"mode": "view"
 		},
 		{
