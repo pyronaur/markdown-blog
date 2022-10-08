@@ -157,7 +157,3 @@ export default function Command() {
 		</Form>
 	);
 }
-
-// function Template(template: string) {
-
-// }
