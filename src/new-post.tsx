@@ -13,19 +13,31 @@ interface Post {
 	content: string;
 }
 
+
+const defaultTemplate = `
+---
+title: __title__ 
+date: __date__
+---
+
+Once upon a time...
+`.trim();
+
 function getTemplate(category: string) {
-	const templatePath = `${preferences().draftsPath}/${category}/.template.md`;
+	const templatePath = path.join(preferences().draftsPath, category, '.template.md');
 	if (category && fs.existsSync(templatePath)) {
 		return fs.readFileSync(templatePath, 'utf8');
 	}
-	const defaultTemplatePath = `${preferences().draftsPath}/.template.md`;
+
+	const defaultTemplatePath = path.join(preferences().draftsPath, '.template.md');
 	if (fs.existsSync(defaultTemplatePath)) {
 		return fs.readFileSync(defaultTemplatePath, 'utf8');
 	}
 
 
-	return '';
+	return defaultTemplate;
 }
+
 function titleToSlug(title: string) {
 	return title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 }
@@ -87,9 +99,9 @@ export default function Command() {
 		if (values.category) {
 			category = values.category + '/';
 		}
-		const path = `${preferences().draftsPath}/${category}${slug}.md`;
+		const postPath = path.join(preferences().draftsPath, category, slug + extension);
 
-		fs.writeFileSync(path, content);
+		fs.writeFileSync(postPath, content);
 
 		await showToast({
 			style: Toast.Style.Success,
@@ -144,12 +156,6 @@ export default function Command() {
 				defaultValue="Post Title"
 				onChange={setTitle}
 			/>
-			<Form.TextField id="slug"
-				title="Post Slug"
-				defaultValue={slug}
-				onChange={setSlug}
-				error={slugError}
-				ref={slugRef} />
 			<Form.TextField id="summary" title="Summary" defaultValue="A new draft has been created." onChange={setSummary} />
 			<Form.Dropdown id="category" title="Category" defaultValue="" onChange={setCategory}>
 				<Form.Dropdown.Item value="" title="None" />
@@ -157,6 +163,12 @@ export default function Command() {
 					<Form.Dropdown.Item key={category} value={category} title={category} />
 				))}
 			</Form.Dropdown>
+			<Form.TextField id="slug"
+				title="Post Slug"
+				defaultValue={slug}
+				onChange={setSlug}
+				error={slugError}
+				ref={slugRef} />
 			<Form.Dropdown id="extension" title="File Extension" defaultValue="" onChange={setExtension}>
 				<Form.Dropdown.Item value="md" title=".md" />
 				<Form.Dropdown.Item value="mdx" title=".mdx" />
