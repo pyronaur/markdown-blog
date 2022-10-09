@@ -99,7 +99,7 @@ export default function Command() {
 		if (values.category) {
 			category = values.category + '/';
 		}
-		const postPath = path.join(preferences().draftsPath, category, slug + extension);
+		const postPath = path.join(preferences().draftsPath, category, `${slug}.${extension}`);
 
 		fs.writeFileSync(postPath, content);
 
@@ -109,7 +109,7 @@ export default function Command() {
 			message: `Created ${path}`,
 		});
 
-		await open(path);
+		await open(postPath);
 		popToRoot();
 
 		return true;
