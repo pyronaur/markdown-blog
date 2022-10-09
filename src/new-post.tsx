@@ -1,5 +1,5 @@
 import { Form, ActionPanel, Action, popToRoot, showToast, Toast, open } from '@raycast/api';
-import { categories, getPosts } from './blog';
+import { categories, getPosts, MarkdownFile } from './blog';
 import fs from 'fs';
 import preferences from "./preferences";
 import { useEffect, useState, useRef } from 'react';
@@ -7,7 +7,7 @@ import path from "path";
 
 interface Post {
 	title: string;
-	excerpt: string;
+	summary: string;
 	category: string;
 	date: string;
 	content: string;
@@ -30,34 +30,53 @@ function titleToSlug(title: string) {
 	return title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 }
 
+
 export default function Command() {
 
-	const [excerpt, setExcerpt] = useState('');
 	const [title, setTitle] = useState('');
+	const [summary, setSummary] = useState('');
 	const [category, setCategory] = useState('');
 	const [preview, setPreview] = useState('');
+	const [extension, setExtension] = useState('.md');
+	const [slug, setSlug] = useState('');
 	const previewRef = useRef<Form.TextArea>(null);
+	const slugRef = useRef<Form.TextField>(null);
+	const [posts, setPosts] = useState<MarkdownFile[]>([]);
 
-	const [titleError, setTitleError] = useState<string | undefined>();
+	const [slugError, setSlugError] = useState<string | undefined>();
+
+
+	useEffect(() => {
+		setPosts(getPosts());
+	}, []);
 
 	useEffect(() => {
 		let template = getTemplate(category);
 
 		template = template.replaceAll("__title__", title);
-		template = template.replaceAll("__excerpt__", excerpt);
+		template = template.replaceAll("__summary__", summary);
 		template = template.replaceAll("__date__", new Date().toISOString().split('T')[0]);
 
 		setPreview(template);
 
-	}, [category, title, excerpt]);
+	}, [category, title, summary]);
 
 	useEffect(() => {
 		previewRef.current?.reset()
 	}, [preview])
 
+	useEffect(() => {
+		setSlug(titleToSlug(title));
+	}, [title])
+
+	useEffect(() => {
+		validatePostSlug();
+		slugRef.current?.reset()
+	}, [slug])
+
 	async function handleSubmit(values: Post): Promise<boolean> {
 
-		if (!validateTitle(values.title)) {
+		if (!validatePostSlug()) {
 			return false;
 		}
 
@@ -84,18 +103,14 @@ export default function Command() {
 		return true;
 	}
 
-	function validateTitle(title: string | undefined) {
+	function validatePostSlug() {
 
-
-		if (!title || title.length === 0) {
-			setTitleError("Title is required");
+		if (!slug) {
+			setSlugError('Slug is required');
 			return false;
 		}
 
-		const slug = titleToSlug(title);
-		const posts = getPosts();
-
-		const existingPost = posts.find(post => post.name.replace(/\.mdx?$/, '').endsWith(slug));
+		const existingPost = posts.find(post => post.name.replace(/\.mdx?/, '') === slug);
 		if (existingPost) {
 			showToast({
 				style: Toast.Style.Failure,
@@ -103,24 +118,18 @@ export default function Command() {
 				message: `${path.basename(path.dirname(existingPost.path))}/${existingPost.name}`,
 			});
 
-			setTitleError("Post Already Exists!");
+			setSlugError("Post Already Exists!");
 			return false;
 		}
 
-		setTitleError(undefined);
+		setSlugError(undefined);
 		return true;
 	}
-
-	function updateTitle(value: string) {
-		setTitle(value)
-		setTitleError(undefined)
-	}
-
-
 
 	return (
 		<Form
 			enableDrafts
+			navigationTitle={`Creating ${slug}.${extension}`}
 			actions={
 				<ActionPanel>
 					<Action.SubmitForm
@@ -133,15 +142,24 @@ export default function Command() {
 				id="title"
 				title="Title"
 				defaultValue="Post Title"
-				onChange={updateTitle}
-				error={titleError}
-				onBlur={(async e => await validateTitle(e.target.value))} />
-			<Form.TextField id="excerpt" title="Excerpt" defaultValue="A new draft has been created." onChange={setExcerpt} />
+				onChange={setTitle}
+			/>
+			<Form.TextField id="slug"
+				title="Post Slug"
+				defaultValue={slug}
+				onChange={setSlug}
+				error={slugError}
+				ref={slugRef} />
+			<Form.TextField id="summary" title="Summary" defaultValue="A new draft has been created." onChange={setSummary} />
 			<Form.Dropdown id="category" title="Category" defaultValue="" onChange={setCategory}>
 				<Form.Dropdown.Item value="" title="None" />
 				{categories().map((category) => (
 					<Form.Dropdown.Item key={category} value={category} title={category} />
 				))}
+			</Form.Dropdown>
+			<Form.Dropdown id="extension" title="File Extension" defaultValue="" onChange={setExtension}>
+				<Form.Dropdown.Item value="md" title=".md" />
+				<Form.Dropdown.Item value="mdx" title=".mdx" />
 			</Form.Dropdown>
 			<Form.Separator />
 			<Form.Description
