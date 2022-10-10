@@ -9,7 +9,7 @@ export default function Command() {
 	const [files, setFiles] = useState(getCategorizedPosts());
 
 
-	function handleTrash() {
+	function refreshFiles() {
 		setFiles(getCategorizedPosts());
 	}
 
@@ -24,14 +24,14 @@ export default function Command() {
 
 			{Object.keys(files).map((category) => (
 				<List.Section title={category} key={category}>
-					{files[category].map((file) => MarkdownFile(file, handleTrash))}
+					{files[category].map((file) => MarkdownFile(file, refreshFiles))}
 				</List.Section>
 			))}
 		</List>
 	);
 }
 
-function MarkdownFile(file: MarkdownFile, handleTrash: () => void) {
+function MarkdownFile(file: MarkdownFile, refreshFiles: () => void) {
 	const { push } = useNavigation();
 
 	function publishPost() {
@@ -42,9 +42,8 @@ function MarkdownFile(file: MarkdownFile, handleTrash: () => void) {
 		content = content.replace(/^date:.*$/gim, `date: ${today}`);
 		fs.writeFileSync(publishPath, content);
 		fs.unlinkSync(file.path);
-
-
-		handleTrash();
+		
+		refreshFiles();
 	}
 
 	return (
@@ -74,7 +73,7 @@ function MarkdownFile(file: MarkdownFile, handleTrash: () => void) {
 							title="Delete File"
 							paths={file.path}
 							shortcut={{ modifiers: ["cmd"], key: "backspace" }}
-							onTrash={handleTrash}
+							onTrash={refreshFiles}
 						/>
 					</ActionPanel.Section>
 				</ActionPanel>
