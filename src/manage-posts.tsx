@@ -1,4 +1,4 @@
-import { ActionPanel, Action, List, useNavigation, Icon } from '@raycast/api';
+import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/api';
 import { useState } from "react";
 import { type MarkdownFile, getCategorizedPosts } from "./blog";
 import NewPost from "./new-post";
@@ -52,7 +52,7 @@ function MarkdownFile(file: MarkdownFile, refreshFiles: () => void) {
 			keywords={file.keywords}
 			title={file.prettyName}
 			subtitle={file.name}
-			icon={{ fileIcon: file.path }}
+			icon={ file.draft ? { source: Icon.CircleProgress75, tintColor: Color.SecondaryText } : { source: Icon.CircleProgress100, tintColor: Color.Green }}
 			accessories={[
 				{
 					date: file.lastModifiedAt,
