@@ -1,8 +1,6 @@
 import { readdirSync, statSync } from "fs";
 import path from "path";
 
-
-
 export function getDirectories(files: string[]) {
 	return files.filter((file) => {
 		return statSync(file).isDirectory();
@@ -10,19 +8,18 @@ export function getDirectories(files: string[]) {
 }
 
 export function getFiles(files: string[]): string[] {
-	return files.filter(file => statSync(file).isFile())
+	return files.filter((file) => statSync(file).isFile());
 }
 
 export function getDirectoryContents(dir: string) {
-	return readdirSync(dir).filter(file => {
-		return file !== ".DS_Store"
-			&& file !== "node_modules"
-			&& !file.startsWith(".")
-	}).map(file => path.join(dir, file));
+	return readdirSync(dir)
+		.filter((file) => {
+			return file !== ".DS_Store" && file !== "node_modules" && !file.startsWith(".");
+		})
+		.map((file) => path.join(dir, file));
 }
 
 export function getRecursiveFiles(dir: string, depth = 0): string[] {
-
 	if (depth > 3) {
 		return [];
 	}
@@ -36,10 +33,9 @@ export function getRecursiveFiles(dir: string, depth = 0): string[] {
 	});
 
 	return results;
-};
+}
 
 export function getRecursiveDirectories(dir: string, depth = 0): string[] {
-
 	if (depth > 3) {
 		return [];
 	}
@@ -52,7 +48,4 @@ export function getRecursiveDirectories(dir: string, depth = 0): string[] {
 	});
 
 	return directories;
-};
-
-
-
+}

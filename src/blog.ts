@@ -1,7 +1,7 @@
 import { statSync } from "fs";
 import path from "path";
-import preferences from "./preferences"
-import { getRecursiveFiles, getRecursiveDirectories } from './utils';
+import preferences from "./preferences";
+import { getRecursiveFiles, getRecursiveDirectories } from "./utils";
 export type MarkdownFile = {
 	name: string;
 	draft: boolean;
@@ -10,23 +10,23 @@ export type MarkdownFile = {
 	prettyName: string;
 	lastModifiedAt: Date;
 	keywords: string[];
-}
+};
 
 export type CategorizedFiles = {
 	[key: string]: MarkdownFile[];
-}
+};
 
 function prettifyFileName(name: string) {
 	return name
 		.replace(/_/g, " ")
 		.replace(/-/g, " ")
 		.replace(/\.mdx?$/, "")
-		.replace(/\b\w/g, l => l.toUpperCase());
+		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
 function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	const name = path.basename(filepath);
-	const category = path.basename(path.dirname(filepath))
+	const category = path.basename(path.dirname(filepath));
 	return {
 		name,
 		category,
@@ -34,26 +34,21 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 		path: filepath,
 		prettyName: prettifyFileName(name),
 		lastModifiedAt: statSync(filepath).mtime,
-		keywords: [category + name]
-	}
-
+		keywords: [category + name],
+	};
 }
 
 export function getPosts(): MarkdownFile[] {
-
-	const content = getRecursiveFiles(preferences().contentPath)
+	const content = getRecursiveFiles(preferences().contentPath);
 	const drafts = getRecursiveFiles(preferences().draftsPath);
 
 	return [
-		...drafts.map(path => pathToPost(path, true)),
-		...content.map(path => pathToPost(path, false))
+		...drafts.map((path) => pathToPost(path, true)),
+		...content.map((path) => pathToPost(path, false)),
 	].sort((a, b) => b.lastModifiedAt.getTime() - a.lastModifiedAt.getTime());
-
-
 }
 
 export function getCategorizedPosts() {
-
 	const files = getPosts();
 
 	const categories = files.reduce((acc, file) => {
@@ -67,22 +62,17 @@ export function getCategorizedPosts() {
 	return categories;
 }
 
-
-
-
-
 export function categories(): string[] {
 	const { draftsPath, contentPath } = preferences();
 
-	const paths = [
-		draftsPath,
-		contentPath
-	];
+	const paths = [draftsPath, contentPath];
 
 	const categories = new Set<string>();
-	return Array.from(paths.reduce((acc, path) => {
-		const directories = getRecursiveDirectories(path);
-		directories.forEach(dir => acc.add(dir));
-		return acc;
-	}, categories)).map(dir => path.basename(dir));
+	return Array.from(
+		paths.reduce((acc, path) => {
+			const directories = getRecursiveDirectories(path);
+			directories.forEach((dir) => acc.add(dir));
+			return acc;
+		}, categories)
+	).map((dir) => path.basename(dir));
 }
