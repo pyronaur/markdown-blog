@@ -1,5 +1,5 @@
-import { readdirSync, statSync } from "fs";
-import path from "path";
+import { readdirSync, statSync } from 'fs';
+import path from 'path';
 
 export function getDirectories(files: string[]) {
 	return files.filter((file) => {
@@ -14,7 +14,7 @@ export function getFiles(files: string[]): string[] {
 export function getDirectoryContents(dir: string) {
 	return readdirSync(dir)
 		.filter((file) => {
-			return file !== ".DS_Store" && file !== "node_modules" && !file.startsWith(".");
+			return file !== '.DS_Store' && file !== 'node_modules' && !file.startsWith('.');
 		})
 		.map((file) => path.join(dir, file));
 }

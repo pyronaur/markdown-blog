@@ -1,7 +1,7 @@
-import { statSync } from "fs";
-import path from "path";
-import preferences from "./preferences";
-import { getRecursiveFiles, getRecursiveDirectories } from "./utils";
+import { statSync } from 'fs';
+import path from 'path';
+import preferences from './preferences';
+import { getRecursiveFiles, getRecursiveDirectories } from './utils';
 export type MarkdownFile = {
 	name: string;
 	draft: boolean;
@@ -18,9 +18,9 @@ export type CategorizedFiles = {
 
 function prettifyFileName(name: string) {
 	return name
-		.replace(/_/g, " ")
-		.replace(/-/g, " ")
-		.replace(/\.mdx?$/, "")
+		.replace(/_/g, ' ')
+		.replace(/-/g, ' ')
+		.replace(/\.mdx?$/, '')
 		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
