@@ -42,7 +42,7 @@ function MarkdownFile(file: MarkdownFile, refreshFiles: () => void) {
 		content = content.replace(/^date:.*$/gim, `date: ${today}`);
 		fs.writeFileSync(publishPath, content);
 		fs.unlinkSync(file.path);
-		
+
 		refreshFiles();
 	}
 
@@ -52,7 +52,7 @@ function MarkdownFile(file: MarkdownFile, refreshFiles: () => void) {
 			keywords={file.keywords}
 			title={file.prettyName}
 			subtitle={file.name}
-			icon={ file.draft ? { source: Icon.CircleProgress75, tintColor: Color.SecondaryText } : { source: Icon.CircleProgress100, tintColor: Color.Green }}
+			icon={file.draft ? { source: Icon.CircleProgress75, tintColor: Color.SecondaryText } : { source: Icon.CircleProgress100, tintColor: Color.Green }}
 			accessories={[
 				{
 					date: file.lastModifiedAt,
@@ -63,10 +63,10 @@ function MarkdownFile(file: MarkdownFile, refreshFiles: () => void) {
 				<ActionPanel>
 					<ActionPanel.Section>
 						<Action.Open title="Open File" target={file.path} />
-						<Action icon={Icon.NewDocument} title="New Blog Post" shortcut={{ modifiers: ["cmd"], key: "n" }} onAction={() => push(<NewPost />)} />
-						{file.draft && (<Action icon={Icon.PlusCircleFilled} title="Publish" shortcut={{ modifiers: ["cmd"], key: "s" }} onAction={publishPost} />)}
 						<Action.ShowInFinder path={file.path} />
+						<Action icon={Icon.NewDocument} title="Create a new blog post" shortcut={{ modifiers: ["cmd"], key: "n" }} onAction={() => push(<NewPost />)} />
 						<Action.OpenWith path={file.path} shortcut={{ modifiers: ["cmd"], key: "o" }} />
+						{file.draft && (<Action icon={{ source: Icon.PlusCircleFilled, tintColor: Color.Green }} title={`Publish "${file.name}"`} shortcut={{ modifiers: ["cmd"], key: "s" }} onAction={publishPost} />)}
 					</ActionPanel.Section>
 					<ActionPanel.Section>
 						<Action.Trash
