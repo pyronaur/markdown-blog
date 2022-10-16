@@ -3,7 +3,7 @@
 	"name": "markdown-blog",
 	"title": "Markdown Blog",
 	"description": "Create, browse and edit your Markdown blog",
-	"icon": "command-icon.png",
+	"icon": "rocket-posts.png",
 	"author": "pyronaur",
 	"categories": [
 		"Productivity"
@@ -20,7 +20,8 @@
 			"name": "new-post",
 			"title": "New Markdown Post",
 			"description": "Create a new Markdown note",
-			"mode": "view"
+			"mode": "view",
+			"icon": "rocket-add.png"
 		}
 	],
 	"preferences": [
