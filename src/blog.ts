@@ -59,12 +59,9 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
  * Get Public and Draft posts
  */
 export function getPosts(): MarkdownFile[] {
-	const perf = performance.now();
 	const published = getRecursiveFiles(preferences().contentPath);
 	const drafts = getRecursiveFiles(preferences().draftsPath);
-	
-	console.log(`getPosts() took ${performance.now() - perf}ms`);
-	
+		
 	return [
 		...drafts.map((path) => pathToPost(path, true)),
 		...published.map((path) => pathToPost(path, false)),
