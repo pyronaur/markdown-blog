@@ -1,7 +1,7 @@
 import { statSync } from 'fs';
 import path from 'path';
 import preferences from './preferences';
-import { getRecursiveFiles, getRecursiveDirectories } from './utils';
+import { getRecursiveFiles, getRecursiveDirectories, filenameToTitle } from './utils';
 
 export type MarkdownFile = {
 	name: string;
@@ -17,16 +17,7 @@ export type CategorizedPosts = {
 	[category: string]: MarkdownFile[];
 };
 
-/**
- * Reverse engineer what a post title could look like without reading the file.
- */
-function filenameToTitle(name: string) {
-	return name
-		.replace(/_/g, ' ')
-		.replace(/-/g, ' ')
-		.replace(/\.mdx?$/, '')
-		.replace(/\b\w/g, (l) => l.toUpperCase());
-}
+
 
 /**
  * Convert a file path to a MarkdownFile object

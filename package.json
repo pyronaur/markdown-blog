@@ -1,8 +1,8 @@
 {
 	"$schema": "https://www.raycast.com/schemas/extension.json",
 	"name": "markdown-blog",
-	"title": "Markdown Blog",
-	"description": "Create, browse and edit your Markdown blog",
+	"title": "Markdown Blog Manager",
+	"description": "Create, browse and edit your file based Markdown blog.",
 	"icon": "mark.png",
 	"author": "pyronaur",
 	"categories": [
@@ -13,14 +13,14 @@
 		{
 			"name": "manage-posts",
 			"title": "Markdown Posts",
-			"description": "Create, browse and edit your Markdown blog",
+			"description": "Browse and edit your posts in your Markdown blog.",
 			"mode": "view",
 			"icon": "mark.png"
 		},
 		{
 			"name": "new-post",
 			"title": "New Markdown Post",
-			"description": "Create a new Markdown note",
+			"description": "Create a new Markdown blog post.",
 			"mode": "view",
 			"icon": "mark-plus.png"
 		}
@@ -29,7 +29,7 @@
 		{
 			"name": "draftsPath",
 			"title": "Drafts Path",
-			"description": "Path to the folder where your drafts are stored",
+			"description": "Path to the folder where your post drafts are stored",
 			"type": "textfield",
 			"required": true,
 			"placeholder": "e.g. ~/Documents/Blog/Drafts"
@@ -37,7 +37,7 @@
 		{
 			"name": "contentPath",
 			"title": "Content Path",
-			"description": "Path to the folder where your content is stored",
+			"description": "Path to the folder where your published posts are stored.",
 			"type": "textfield",
 			"required": true,
 			"placeholder": "e.g. ~/Documents/Blog/Content"

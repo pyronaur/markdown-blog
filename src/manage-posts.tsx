@@ -1,9 +1,9 @@
 import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/api';
 import { useState, useEffect } from 'react';
-import { type MarkdownFile, getCategorizedPosts } from './blog';
+import { type MarkdownFile, getCategorizedPosts } from './utils/blog';
 import NewPost from './new-post';
 import fs from 'fs';
-import { capitalize, clearFileCache } from './utils';
+import { capitalize, clearFileCache } from './utils/utils';
 
 const filters = {
 	all: () => true,

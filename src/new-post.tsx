@@ -1,9 +1,11 @@
-import { Form, ActionPanel, Action, popToRoot, showToast, Toast, open } from '@raycast/api';
-import { categories, getPosts, MarkdownFile } from './blog';
-import fs from 'fs';
-import preferences from './preferences';
-import { useEffect, useState, useRef } from 'react';
 import path from 'path';
+import fs from 'fs';
+import { useEffect, useState, useRef } from 'react';
+import { Form, ActionPanel, Action, popToRoot, showToast, Toast, open } from '@raycast/api';
+import { categories, getPosts } from './utils/blog';
+import preferences from './utils/preferences';
+import { titleToSlug } from './utils/utils';
+import { fillTemplateVariables } from './utils/templates';
 
 interface Post {
 	title: string;
@@ -13,35 +15,7 @@ interface Post {
 	content: string;
 }
 
-const defaultTemplate = `
----
-title: __title__ 
-date: __date__
----
 
-Once upon a time...
-`.trim();
-
-function getPostTemplate(category: string) {
-	const templatePath = path.join(preferences().draftsPath, category, '.template.md');
-	if (category && fs.existsSync(templatePath)) {
-		return fs.readFileSync(templatePath, 'utf8');
-	}
-
-	const defaultTemplatePath = path.join(preferences().draftsPath, '.template.md');
-	if (fs.existsSync(defaultTemplatePath)) {
-		return fs.readFileSync(defaultTemplatePath, 'utf8');
-	}
-
-	return defaultTemplate;
-}
-
-function titleToSlug(title: string) {
-	return title
-		.toLowerCase()
-		.replace(/ /g, '-')
-		.replace(/[^\w-]+/g, '');
-}
 
 export default function Command() {
 	const [title, setTitle] = useState('');
@@ -52,22 +26,12 @@ export default function Command() {
 	const [slug, setSlug] = useState('');
 	const previewRef = useRef<Form.TextArea>(null);
 	const slugRef = useRef<Form.TextField>(null);
-	const [posts, setPosts] = useState<MarkdownFile[]>([]);
+	const posts = getPosts();
 
 	const [slugError, setSlugError] = useState<string | undefined>();
 
 	useEffect(() => {
-		setPosts(getPosts());
-	}, []);
-
-	useEffect(() => {
-		let template = getPostTemplate(category);
-
-		template = template.replaceAll('__title__', title);
-		template = template.replaceAll('__summary__', summary);
-		template = template.replaceAll('__date__', new Date().toISOString().split('T')[0]);
-
-		setPreview(template);
+		setPreview(fillTemplateVariables(category, title, summary));
 	}, [category, title, summary]);
 
 	useEffect(() => {
@@ -89,7 +53,6 @@ export default function Command() {
 		}
 
 		const content = values.content;
-		const slug = titleToSlug(values.title);
 		let category = '';
 
 		if (values.category) {
