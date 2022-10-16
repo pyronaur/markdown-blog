@@ -1,53 +1,28 @@
-import { readdirSync, statSync } from 'fs';
-import path from 'path';
+import { globbySync } from 'globby';
 
-export function getDirectories(files: string[]) {
-	return files.filter((file) => {
-		return statSync(file).isDirectory();
-	});
-}
+const memcache: Record<string, string[]> = {}
 
-export function getFiles(files: string[]): string[] {
-	return files.filter((file) => statSync(file).isFile());
-}
-
-export function getDirectoryContents(dir: string) {
-	return readdirSync(dir)
-		.filter((file) => {
-			return file !== '.DS_Store' && file !== 'node_modules' && !file.startsWith('.');
-		})
-		.map((file) => path.join(dir, file));
-}
-
-export function getRecursiveFiles(dir: string, depth = 0): string[] {
-	if (depth > 3) {
-		return [];
+function cachedGlobby(dir: string, pattern: string, opts = {}) {
+	const cacheKey = `${dir}:${pattern}`
+	if (!(cacheKey in memcache) || memcache[cacheKey].length === 0) {
+		memcache[cacheKey] = globbySync(`${dir}/${pattern}`, {
+			ignore: ['**/node_modules/**', '**/.git/**', '**/.DS_Store'],
+			ignoreFiles: `${dir}/.ray-ignore`,
+			...opts
+		});
 	}
-
-	const contents = getDirectoryContents(dir);
-	const directories = getDirectories(contents);
-	const results = getFiles(contents);
-
-	directories.forEach((path) => {
-		results.push(...getRecursiveFiles(path, ++depth));
-	});
-
-	return results;
+	return memcache[cacheKey];
 }
 
-export function getRecursiveDirectories(dir: string, depth = 0): string[] {
-	if (depth > 3) {
-		return [];
-	}
-	const contents = getDirectoryContents(dir);
-	const directories = getDirectories(contents);
+export function getRecursiveFiles(dir: string): string[] {
+	return cachedGlobby(dir, `**/*.{md,mdx}`);
+}
 
-	const results = getDirectories(contents);
-	directories.forEach((path) => {
-		results.push(...getRecursiveDirectories(path, ++depth));
+
+export function getRecursiveDirectories(dir: string): string[] {
+	return cachedGlobby(dir, `**/*`, {
+		onlyDirectories: true,
 	});
-
-	return directories;
 }
 
 export function capitalize(text: string) {
