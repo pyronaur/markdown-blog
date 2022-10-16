@@ -60,9 +60,7 @@ export default function Command() {
 	);
 }
 
-function StatusDropdown(props) {
-	const { files, onFilterChange } = props;
-
+function StatusDropdown({ onFilterChange }: { onFilterChange: () => void }) {
 	return (
 		<List.Dropdown tooltip="Select Post Status" storeValue={true} onChange={onFilterChange}>
 			<List.Dropdown.Item key="all" title="All" value="all" />
@@ -72,11 +70,15 @@ function StatusDropdown(props) {
 	);
 }
 
-function Post(props) {
-	const file: MarkdownFile = props.file;
-	const refreshFiles = props.refreshFiles;
-	const newPost = props.newPost;
-
+function Post({
+	file,
+	refreshFiles,
+	newPost,
+}: {
+	file: MarkdownFile;
+	refreshFiles: () => void;
+	newPost: () => void;
+}) {
 	function publishPost() {
 		const publishPath = file.path.replace('/draft/', '/public/');
 
