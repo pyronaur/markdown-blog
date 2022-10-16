@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { type MarkdownFile, getCategorizedPosts } from "./blog";
 import NewPost from "./new-post";
 import fs from "fs";
-import { capitalize } from './utils';
+import { capitalize, clearFileCache } from './utils';
 
 const filters = {
 	all: () => true,
@@ -29,6 +29,7 @@ export default function Command() {
 	const newPostAction = () => push(<NewPost />);
 
 	function refreshFiles() {
+		clearFileCache();
 		setFiles(getCategorizedPosts());
 	}
 

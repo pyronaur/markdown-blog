@@ -1,6 +1,6 @@
 import { globbySync } from 'globby';
 
-const memcache: Record<string, string[]> = {}
+let memcache: Record<string, string[]> = {}
 
 function cachedGlobby(dir: string, pattern: string, opts = {}) {
 	const cacheKey = `${dir}:${pattern}`
@@ -12,6 +12,10 @@ function cachedGlobby(dir: string, pattern: string, opts = {}) {
 		});
 	}
 	return memcache[cacheKey];
+}
+
+export function clearFileCache() {
+	memcache = {}
 }
 
 export function getRecursiveFiles(dir: string): string[] {
