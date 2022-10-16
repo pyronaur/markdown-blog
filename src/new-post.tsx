@@ -1,5 +1,5 @@
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs-extra';
 import { useEffect, useState, useRef } from 'react';
 import { Form, ActionPanel, Action, popToRoot, showToast, Toast, open } from '@raycast/api';
 import { categories, getPosts } from './utils/blog';
@@ -59,7 +59,7 @@ export default function Command() {
 			category = values.category + '/';
 		}
 		const postPath = path.join(preferences().draftsPath, category, `${slug}.${extension}`);
-
+		fs.ensureDirSync(path.dirname(postPath));
 		fs.writeFileSync(postPath, content);
 
 		await showToast({

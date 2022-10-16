@@ -2,8 +2,10 @@ import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/
 import { useState, useEffect } from 'react';
 import { type MarkdownFile, getCategorizedPosts } from './utils/blog';
 import NewPost from './new-post';
-import fs from 'fs';
+import fs from 'fs-extra';
+import path from 'path';
 import { capitalize, clearFileCache } from './utils/utils';
+
 
 const filters = {
 	all: () => true,
@@ -82,6 +84,7 @@ function Post({ file, refreshFiles }: { file: MarkdownFile; refreshFiles: () => 
 		let content = fs.readFileSync(file.path, 'utf8');
 		const today = new Date().toISOString().split('T')[0];
 		content = content.replace(/^date:.*$/gim, `date: ${today}`);
+		fs.ensureDirSync(path.dirname(publishPath));
 		fs.writeFileSync(publishPath, content);
 		fs.unlinkSync(file.path);
 
