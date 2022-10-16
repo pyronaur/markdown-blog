@@ -25,12 +25,18 @@ function getFilteredPosts(filterName: AvailableFilters) {
 export default function Command() {
 	const [filter, setFilter] = useState<AvailableFilters>('all');
 	const [files, setFiles] = useState<Record<string, MarkdownFile[]>>(getFilteredPosts(filter));
-	const { push } = useNavigation();
-	const newPostAction = () => push(<NewPost />);
 
 	function refreshFiles() {
 		clearFileCache();
 		setFiles(getCategorizedPosts());
+	}
+
+	function changeActiveFilter(value: string) {
+		if (value in filters) {
+			setFilter(value as AvailableFilters);
+			return;
+		}
+		throw new Error(`Invalid filter: ${value}`);
 	}
 
 	useEffect(() => {
@@ -41,7 +47,13 @@ export default function Command() {
 	return (
 		<List
 			navigationTitle="Browse Posts"
-			searchBarAccessory={<StatusDropdown files={files} onFilterChange={setFilter} />}
+			searchBarAccessory={
+				<List.Dropdown tooltip="Select Post Status" storeValue={true} onChange={changeActiveFilter}>
+					<List.Dropdown.Item key="all" title="All" value="all" />
+					<List.Dropdown.Item key="published" title="Published" value="published" />
+					<List.Dropdown.Item key="draft" title="Drafts" value="drafts" />
+				</List.Dropdown>
+			}
 		>
 			{categories.length === 0 && (
 				<List.EmptyView title="Couldn't find any .md or .mdx files!" description="" />
@@ -52,7 +64,7 @@ export default function Command() {
 					<List.Section title={capitalize(category)} key={category}>
 						{category in files &&
 							files[category].map((file) => (
-								<Post file={file} refreshFiles={refreshFiles} push={newPostAction} />
+								<Post file={file} key={file.path} refreshFiles={refreshFiles} />
 							))}
 					</List.Section>
 				))}
@@ -60,25 +72,10 @@ export default function Command() {
 	);
 }
 
-function StatusDropdown({ onFilterChange }: { onFilterChange: () => void }) {
-	return (
-		<List.Dropdown tooltip="Select Post Status" storeValue={true} onChange={onFilterChange}>
-			<List.Dropdown.Item key="all" title="All" value="all" />
-			<List.Dropdown.Item key="published" title="Published" value="published" />
-			<List.Dropdown.Item key="draft" title="Drafts" value="drafts" />
-		</List.Dropdown>
-	);
-}
+function Post({ file, refreshFiles }: { file: MarkdownFile; refreshFiles: () => void }) {
+	const { push } = useNavigation();
+	const createNewPost = () => push(<NewPost />);
 
-function Post({
-	file,
-	refreshFiles,
-	newPost,
-}: {
-	file: MarkdownFile;
-	refreshFiles: () => void;
-	newPost: () => void;
-}) {
 	function publishPost() {
 		const publishPath = file.path.replace('/draft/', '/public/');
 
@@ -93,7 +90,6 @@ function Post({
 
 	return (
 		<List.Item
-			key={file.path}
 			keywords={file.keywords}
 			title={file.prettyName}
 			subtitle={file.name}
@@ -117,7 +113,7 @@ function Post({
 							icon={Icon.NewDocument}
 							title="Create a new blog post"
 							shortcut={{ modifiers: ['cmd'], key: 'n' }}
-							onAction={newPost}
+							onAction={createNewPost}
 						/>
 						<Action.OpenWith path={file.path} shortcut={{ modifiers: ['cmd'], key: 'o' }} />
 						{file.draft && (
