@@ -1,14 +1,14 @@
-import { ActionPanel, Action, List, useNavigation, Icon, Color } from "@raycast/api";
-import { useState, useEffect } from "react";
-import { type MarkdownFile, getCategorizedPosts } from "./blog";
-import NewPost from "./new-post";
-import fs from "fs";
+import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/api';
+import { useState, useEffect } from 'react';
+import { type MarkdownFile, getCategorizedPosts } from './blog';
+import NewPost from './new-post';
+import fs from 'fs';
 import { capitalize, clearFileCache } from './utils';
 
 const filters = {
 	all: () => true,
 	published: (file: MarkdownFile) => !file.draft,
-	drafts: (file: MarkdownFile) => file.draft
+	drafts: (file: MarkdownFile) => file.draft,
 };
 
 type AvailableFilters = keyof typeof filters;
@@ -23,7 +23,7 @@ function getFilteredPosts(filterName: AvailableFilters) {
 }
 
 export default function Command() {
-	const [filter, setFilter] = useState<AvailableFilters>("all");
+	const [filter, setFilter] = useState<AvailableFilters>('all');
 	const [files, setFiles] = useState<Record<string, MarkdownFile[]>>(getFilteredPosts(filter));
 	const { push } = useNavigation();
 	const newPostAction = () => push(<NewPost />);
@@ -78,10 +78,10 @@ function Post(props) {
 	const newPost = props.newPost;
 
 	function publishPost() {
-		const publishPath = file.path.replace("/draft/", "/public/");
+		const publishPath = file.path.replace('/draft/', '/public/');
 
-		let content = fs.readFileSync(file.path, "utf8");
-		const today = new Date().toISOString().split("T")[0];
+		let content = fs.readFileSync(file.path, 'utf8');
+		const today = new Date().toISOString().split('T')[0];
 		content = content.replace(/^date:.*$/gim, `date: ${today}`);
 		fs.writeFileSync(publishPath, content);
 		fs.unlinkSync(file.path);
@@ -103,8 +103,8 @@ function Post(props) {
 			accessories={[
 				{
 					date: file.lastModifiedAt,
-					tooltip: `Last modified: ${file.lastModifiedAt.toLocaleString()}`
-				}
+					tooltip: `Last modified: ${file.lastModifiedAt.toLocaleString()}`,
+				},
 			]}
 			actions={
 				<ActionPanel>
@@ -114,15 +114,15 @@ function Post(props) {
 						<Action
 							icon={Icon.NewDocument}
 							title="Create a new blog post"
-							shortcut={{ modifiers: ["cmd"], key: "n" }}
+							shortcut={{ modifiers: ['cmd'], key: 'n' }}
 							onAction={newPost}
 						/>
-						<Action.OpenWith path={file.path} shortcut={{ modifiers: ["cmd"], key: "o" }} />
+						<Action.OpenWith path={file.path} shortcut={{ modifiers: ['cmd'], key: 'o' }} />
 						{file.draft && (
 							<Action
 								icon={{ source: Icon.PlusCircleFilled, tintColor: Color.Green }}
 								title={`Publish "${file.name}"`}
-								shortcut={{ modifiers: ["cmd"], key: "s" }}
+								shortcut={{ modifiers: ['cmd'], key: 's' }}
 								onAction={publishPost}
 							/>
 						)}
@@ -131,7 +131,7 @@ function Post(props) {
 						<Action.Trash
 							title="Delete File"
 							paths={file.path}
-							shortcut={{ modifiers: ["cmd"], key: "backspace" }}
+							shortcut={{ modifiers: ['cmd'], key: 'backspace' }}
 							onTrash={refreshFiles}
 						/>
 					</ActionPanel.Section>

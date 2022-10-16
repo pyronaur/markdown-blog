@@ -4,7 +4,6 @@ import { performance } from 'perf_hooks';
 import preferences from './preferences';
 import { getRecursiveFiles, getRecursiveDirectories } from './utils';
 
-
 export type MarkdownFile = {
 	name: string;
 	draft: boolean;
@@ -35,10 +34,7 @@ function prettifyFileName(name: string) {
  */
 function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	const name = path.basename(filepath);
-	const contentPaths = [
-		preferences().contentPath,
-		preferences().draftsPath,
-	];
+	const contentPaths = [preferences().contentPath, preferences().draftsPath];
 	const relativePath = contentPaths.reduce((acc, root) => {
 		return acc.replace(root, '');
 	}, filepath);
@@ -61,13 +57,12 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 export function getPosts(): MarkdownFile[] {
 	const published = getRecursiveFiles(preferences().contentPath);
 	const drafts = getRecursiveFiles(preferences().draftsPath);
-		
+
 	return [
 		...drafts.map((path) => pathToPost(path, true)),
 		...published.map((path) => pathToPost(path, false)),
 	].sort((a, b) => b.lastModifiedAt.getTime() - a.lastModifiedAt.getTime());
 }
-
 
 /**
  * Organize posts by category
@@ -86,16 +81,15 @@ export function getCategorizedPosts(): CategorizedPosts {
 	return categories;
 }
 
-
 /**
  * Get all the categories in the content directory
- * 
+ *
  * @returns {string[]}
  * For example:
  * - /content/drafts/my-category/my-post.md
  * - /content/drafts/my-category/my-other-post.md
  * - /content/public/my-other-category/my-post.md
- * 
+ *
  * Will return:
  * - ['my-category', 'my-other-category']
  */
