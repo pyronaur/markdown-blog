@@ -2,6 +2,8 @@ import { statSync } from 'fs';
 import path from 'path';
 import preferences from './preferences';
 import { getRecursiveFiles, getRecursiveDirectories } from './utils';
+
+
 export type MarkdownFile = {
 	name: string;
 	draft: boolean;
@@ -12,10 +14,13 @@ export type MarkdownFile = {
 	keywords: string[];
 };
 
-export type CategorizedFiles = {
-	[key: string]: MarkdownFile[];
+export type CategorizedPosts = {
+	[category: string]: MarkdownFile[];
 };
 
+/**
+ * Reverse engineer what a post title could look like without reading the file.
+ */
 function prettifyFileName(name: string) {
 	return name
 		.replace(/_/g, ' ')
@@ -24,6 +29,9 @@ function prettifyFileName(name: string) {
 		.replace(/\b\w/g, (l) => l.toUpperCase());
 }
 
+/**
+ * Convert a file path to a MarkdownFile object
+ */
 function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	const name = path.basename(filepath);
 	const category = path.basename(path.dirname(filepath));
@@ -38,17 +46,24 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	};
 }
 
+/**
+ * Get Public and Draft posts
+ */
 export function getPosts(): MarkdownFile[] {
-	const content = getRecursiveFiles(preferences().contentPath);
+	const published = getRecursiveFiles(preferences().contentPath);
 	const drafts = getRecursiveFiles(preferences().draftsPath);
 
 	return [
 		...drafts.map((path) => pathToPost(path, true)),
-		...content.map((path) => pathToPost(path, false)),
+		...published.map((path) => pathToPost(path, false)),
 	].sort((a, b) => b.lastModifiedAt.getTime() - a.lastModifiedAt.getTime());
 }
 
-export function getCategorizedPosts() {
+
+/**
+ * Organize posts by category
+ */
+export function getCategorizedPosts(): CategorizedPosts {
 	const files = getPosts();
 
 	const categories = files.reduce((acc, file) => {
@@ -57,11 +72,24 @@ export function getCategorizedPosts() {
 		}
 		acc[file.category].push(file);
 		return acc;
-	}, {} as Record<string, MarkdownFile[]>);
+	}, {} as CategorizedPosts);
 
 	return categories;
 }
 
+
+/**
+ * Get all the categories in the content directory
+ * 
+ * @returns {string[]}
+ * For example:
+ * - /content/drafts/my-category/my-post.md
+ * - /content/drafts/my-category/my-other-post.md
+ * - /content/public/my-other-category/my-post.md
+ * 
+ * Will return:
+ * - ['my-category', 'my-other-category']
+ */
 export function categories(): string[] {
 	const { draftsPath, contentPath } = preferences();
 
