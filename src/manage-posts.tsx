@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { type MarkdownFile, getCategorizedPosts } from "./blog";
 import NewPost from "./new-post";
 import fs from "fs";
+import { capitalize } from "./utils";
 
 const filters = {
   all: () => true,
@@ -47,7 +48,7 @@ export default function Command() {
 
       {categories.length !== 0 &&
         categories.map((category) => (
-          <List.Section title={category} key={category}>
+          <List.Section title={capitalize(category)} key={category}>
             {category in files &&
               files[category].map((file) => (
                 <Post file={file} refreshFiles={refreshFiles} push={newPostAction} />

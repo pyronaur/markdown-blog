@@ -49,3 +49,7 @@ export function getRecursiveDirectories(dir: string, depth = 0): string[] {
 
 	return directories;
 }
+
+export function capitalize(text: string) {
+	return text.charAt(0).toUpperCase() + text.slice(1);
+}

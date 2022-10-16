@@ -34,7 +34,15 @@ function prettifyFileName(name: string) {
  */
 function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	const name = path.basename(filepath);
-	const category = path.basename(path.dirname(filepath));
+	const contentPaths = [
+		preferences().contentPath,
+		preferences().draftsPath,
+	];
+	const relativePath = contentPaths.reduce((acc, root) => {
+		return acc.replace(root, '');
+	}, filepath);
+
+	const category = path.basename(path.dirname(relativePath)) || 'Uncategorized';
 	return {
 		name,
 		category,
