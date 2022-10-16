@@ -22,7 +22,7 @@ date: __date__
 Once upon a time...
 `.trim();
 
-function getTemplate(category: string) {
+function getPostTemplate(category: string) {
 	const templatePath = path.join(preferences().draftsPath, category, '.template.md');
 	if (category && fs.existsSync(templatePath)) {
 		return fs.readFileSync(templatePath, 'utf8');
@@ -61,7 +61,7 @@ export default function Command() {
 	}, []);
 
 	useEffect(() => {
-		let template = getTemplate(category);
+		let template = getPostTemplate(category);
 
 		template = template.replaceAll('__title__', title);
 		template = template.replaceAll('__summary__', summary);

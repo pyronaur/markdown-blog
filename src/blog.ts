@@ -1,6 +1,5 @@
 import { statSync } from 'fs';
 import path from 'path';
-import { performance } from 'perf_hooks';
 import preferences from './preferences';
 import { getRecursiveFiles, getRecursiveDirectories } from './utils';
 
@@ -9,7 +8,7 @@ export type MarkdownFile = {
 	draft: boolean;
 	path: string;
 	category: string;
-	prettyName: string;
+	title: string;
 	lastModifiedAt: Date;
 	keywords: string[];
 };
@@ -21,7 +20,7 @@ export type CategorizedPosts = {
 /**
  * Reverse engineer what a post title could look like without reading the file.
  */
-function prettifyFileName(name: string) {
+function filenameToTitle(name: string) {
 	return name
 		.replace(/_/g, ' ')
 		.replace(/-/g, ' ')
@@ -45,7 +44,7 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 		category,
 		draft,
 		path: filepath,
-		prettyName: prettifyFileName(name),
+		title: filenameToTitle(name),
 		lastModifiedAt: statSync(filepath).mtime,
 		keywords: [category + name],
 	};

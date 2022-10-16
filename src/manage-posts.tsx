@@ -91,7 +91,7 @@ function Post({ file, refreshFiles }: { file: MarkdownFile; refreshFiles: () => 
 	return (
 		<List.Item
 			keywords={file.keywords}
-			title={file.prettyName}
+			title={file.title}
 			subtitle={file.name}
 			icon={
 				file.draft
