@@ -4,7 +4,18 @@ import preferences from './preferences';
 import { getRecursiveFiles, getRecursiveDirectories, filenameToTitle } from './utils';
 import fs from 'fs-extra';
 
-export type MarkdownFile = {
+
+export interface Post {
+	title: string;
+	summary: string;
+	category: string;
+	extension: string;
+	slug: string;
+	date: string;
+	content: string;
+}
+
+export interface MarkdownFile {
 	name: string;
 	draft: boolean;
 	path: string;
@@ -89,12 +100,12 @@ export function categories(): string[] {
 
 	const categories = new Set<string>();
 	return Array.from(
-		paths.reduce((acc, path) => {
-			const directories = getRecursiveDirectories(path);
-			directories.forEach((dir) => acc.add(dir));
+		paths.reduce((acc, postPath) => {
+			const directories = getRecursiveDirectories(postPath);
+			directories.forEach((dir) => acc.add(path.basename(dir)));
 			return acc;
 		}, categories)
-	).map((dir) => path.basename(dir));
+	);
 }
 
 export function publishPost(post: MarkdownFile): void {
@@ -114,4 +125,19 @@ export function publishPost(post: MarkdownFile): void {
 	fs.ensureDirSync(path.dirname(newPostPath));
 	fs.writeFileSync(newPostPath, updatedContent);
 	fs.unlinkSync(post.path);
+}
+
+
+export function createDraft(post: Post): string {
+	let category = '';
+
+	const postPath = path.join(preferences().draftsPath, category, `${post.slug}.${post.extension}`);
+	if (post.category) {
+		category = post.category + '/';
+	}
+
+	fs.ensureDirSync(path.dirname(postPath));
+	fs.writeFileSync(postPath, post.content);
+
+	return postPath;
 }

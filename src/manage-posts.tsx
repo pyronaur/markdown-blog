@@ -2,8 +2,6 @@ import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/
 import { useState, useEffect } from 'react';
 import { type MarkdownFile, getCategorizedPosts, publishPost } from './utils/blog';
 import NewPost from './new-post';
-import fs from 'fs-extra';
-import path from 'path';
 import { capitalize, clearFileCache } from './utils/utils';
 
 const filters = {
