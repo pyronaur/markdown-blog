@@ -9,7 +9,7 @@ This extension helps organize, edit and publish blog posts from Raycast. To do a
 1. Posts are stored in a folder on your computer.
 2. Posts are written in `md` or `mdx` files.
 3. Drafts and published posts are stored in separate folders.
-4. Posts can be categorized using directories.
+4. Posts can be categorized using sub-directories.
 
 ## Folder Structure
 You can keep your posts anywhere on your computer and configure the posts and drafts directories separately.
