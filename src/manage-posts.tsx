@@ -1,6 +1,6 @@
 import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/api';
 import { useState, useEffect } from 'react';
-import { type MarkdownFile, getCategorizedPosts, publishPost } from './utils/blog';
+import { type MarkdownFile, getOrganizedPosts, publishPost } from './utils/blog';
 import NewPost from './new-post';
 import { capitalize, clearFileCache } from './utils/utils';
 
@@ -13,7 +13,7 @@ const filters = {
 type AvailableFilters = keyof typeof filters;
 
 function getFilteredPosts(filterName: AvailableFilters) {
-	const posts = getCategorizedPosts();
+	const posts = getOrganizedPosts();
 	for (const [key, group] of Object.entries(posts)) {
 		posts[key] = group.filter(filters[filterName]);
 	}
@@ -27,7 +27,7 @@ export default function Command() {
 
 	function refreshFiles() {
 		clearFileCache();
-		setFiles(getCategorizedPosts());
+		setFiles(getOrganizedPosts());
 	}
 
 	function changeActiveFilter(value: string) {

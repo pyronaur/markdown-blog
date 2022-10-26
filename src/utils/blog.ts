@@ -25,7 +25,7 @@ export interface MarkdownFile {
 	keywords: string[];
 };
 
-export type CategorizedPosts = {
+export type OrganizedPosts = {
 	[subdirectory: string]: MarkdownFile[];
 };
 
@@ -67,7 +67,7 @@ export function getPosts(): MarkdownFile[] {
 /**
  * Organize posts by subdirectory
  */
-export function getCategorizedPosts(): CategorizedPosts {
+export function getOrganizedPosts(): OrganizedPosts {
 	const files = getPosts();
 
 	const subdirectories = files.reduce((acc, file) => {
@@ -76,7 +76,7 @@ export function getCategorizedPosts(): CategorizedPosts {
 		}
 		acc[file.subdirectory].push(file);
 		return acc;
-	}, {} as CategorizedPosts);
+	}, {} as OrganizedPosts);
 
 	return subdirectories;
 }
