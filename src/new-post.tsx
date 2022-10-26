@@ -1,7 +1,7 @@
 import path from 'path';
 import { useEffect } from 'react';
 import { Form, ActionPanel, Action, popToRoot, showToast, Toast, open } from '@raycast/api';
-import { categories, getPosts, createDraft, Post } from './utils/blog';
+import { subdirectories, getPosts, createDraft, Post } from './utils/blog';
 import { titleToSlug } from './utils/utils';
 import { fillTemplateVariables } from './utils/templates';
 import { FormValidation, useForm } from '@raycast/utils';
@@ -51,12 +51,12 @@ export default function Command() {
 
 
 	useEffect(() => {
-		const category = itemProps.category.value || '';
+		const subdirectory = itemProps.subdirectory.value || '';
 		const title = itemProps.title.value || '';
 		const summary = itemProps.summary.value || '';
-		setValue('content', fillTemplateVariables(category, title, summary));
+		setValue('content', fillTemplateVariables(subdirectory, title, summary));
 	}, [
-		itemProps.category.value,
+		itemProps.subdirectory.value,
 		itemProps.title.value,
 		itemProps.summary.value
 	]);
@@ -85,10 +85,10 @@ export default function Command() {
 				title="Summary"
 				{...itemProps.summary}
 			/>
-			<Form.Dropdown title="Category" {...itemProps.category}>
+			<Form.Dropdown title="Subdirectory" {...itemProps.subdirectory}>
 				<Form.Dropdown.Item value="" title="None" />
-				{categories().map((category) => (
-					<Form.Dropdown.Item key={category} value={category} title={category} />
+				{subdirectories().map((subdirectory) => (
+					<Form.Dropdown.Item key={subdirectory} value={subdirectory} title={subdirectory} />
 				))}
 			</Form.Dropdown>
 			<Form.TextField

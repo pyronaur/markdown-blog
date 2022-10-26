@@ -42,7 +42,7 @@ export default function Command() {
 		setFiles(getFilteredPosts(filter));
 	}, [filter]);
 
-	const categories = Object.keys(files);
+	const subdirectories = Object.keys(files);
 	return (
 		<List
 			navigationTitle="Browse Posts"
@@ -54,15 +54,15 @@ export default function Command() {
 				</List.Dropdown>
 			}
 		>
-			{categories.length === 0 && (
+			{subdirectories.length === 0 && (
 				<List.EmptyView title="Couldn't find any .md or .mdx files!" description="" />
 			)}
 
-			{categories.length !== 0 &&
-				categories.map((category) => (
-					<List.Section title={capitalize(category)} key={category}>
-						{category in files &&
-							files[category].map((file) => (
+			{subdirectories.length !== 0 &&
+				subdirectories.map((subdirectory) => (
+					<List.Section title={capitalize(subdirectory)} key={subdirectory}>
+						{subdirectory in files &&
+							files[subdirectory].map((file) => (
 								<Post file={file} key={file.path} refreshFiles={refreshFiles} />
 							))}
 					</List.Section>

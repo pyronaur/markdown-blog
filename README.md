@@ -23,18 +23,18 @@ This is the folder structure I use with Astro:
 			/public
 				- post1.md
 				- post2.md
-				/category-name
+				/subdirectory-name
 					- post3.md
 					- post4.md
 			/draft
 				- post5.md
 				- post6.md
-				/another-category
+				/another-subdirectory
 					- post7.md
 					- post8.md
 ```
 
-When a post is published, it's moved from the drafts folder to the public folder. For example, `post7.md` would be moved from `/drafts/another-category` to `/public/another-category`.
+When a post is published, it's moved from the drafts folder to the public folder. For example, `post7.md` would be moved from `/drafts/another-subdirectory` to `/public/another-subdirectory`.
 
 The slugs of each post must be unique even though they may be in different directories.
 
