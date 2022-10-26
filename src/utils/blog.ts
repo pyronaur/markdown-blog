@@ -22,7 +22,7 @@ export type CategorizedPosts = {
  */
 function pathToPost(filepath: string, draft: boolean): MarkdownFile {
 	const name = path.basename(filepath);
-	const contentPaths = [preferences().contentPath, preferences().draftsPath];
+	const contentPaths = [preferences().publicPath, preferences().draftsPath];
 	const relativePath = contentPaths.reduce((acc, root) => {
 		return acc.replace(root, '');
 	}, filepath);
@@ -43,7 +43,7 @@ function pathToPost(filepath: string, draft: boolean): MarkdownFile {
  * Get Public and Draft posts
  */
 export function getPosts(): MarkdownFile[] {
-	const published = getRecursiveFiles(preferences().contentPath);
+	const published = getRecursiveFiles(preferences().publicPath);
 	const drafts = getRecursiveFiles(preferences().draftsPath);
 
 	return [
@@ -82,9 +82,9 @@ export function getCategorizedPosts(): CategorizedPosts {
  * - ['my-category', 'my-other-category']
  */
 export function categories(): string[] {
-	const { draftsPath, contentPath } = preferences();
+	const { draftsPath, publicPath } = preferences();
 
-	const paths = [draftsPath, contentPath];
+	const paths = [draftsPath, publicPath];
 
 	const categories = new Set<string>();
 	return Array.from(
