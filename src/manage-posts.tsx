@@ -1,6 +1,6 @@
 import { ActionPanel, Action, List, useNavigation, Icon, Color } from '@raycast/api';
 import { useState, useEffect } from 'react';
-import { type MarkdownFile, getCategorizedPosts } from './utils/blog';
+import { type MarkdownFile, getCategorizedPosts, publishPost } from './utils/blog';
 import NewPost from './new-post';
 import fs from 'fs-extra';
 import path from 'path';
@@ -77,16 +77,8 @@ function Post({ file, refreshFiles }: { file: MarkdownFile; refreshFiles: () => 
 	const { push } = useNavigation();
 	const createNewPost = () => push(<NewPost />);
 
-	function publishPost() {
-		const publishPath = file.path.replace('/draft/', '/public/');
-
-		let content = fs.readFileSync(file.path, 'utf8');
-		const today = new Date().toISOString().split('T')[0];
-		content = content.replace(/^date:.*$/gim, `date: ${today}`);
-		fs.ensureDirSync(path.dirname(publishPath));
-		fs.writeFileSync(publishPath, content);
-		fs.unlinkSync(file.path);
-
+	function publish() {
+		publishPost(file);
 		refreshFiles();
 	}
 
@@ -123,7 +115,7 @@ function Post({ file, refreshFiles }: { file: MarkdownFile; refreshFiles: () => 
 								icon={{ source: Icon.PlusCircleFilled, tintColor: Color.Green }}
 								title={`Publish "${file.name}"`}
 								shortcut={{ modifiers: ['cmd'], key: 's' }}
-								onAction={publishPost}
+								onAction={publish}
 							/>
 						)}
 					</ActionPanel.Section>

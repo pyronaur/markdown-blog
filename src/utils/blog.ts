@@ -2,6 +2,7 @@ import { statSync } from 'fs';
 import path from 'path';
 import preferences from './preferences';
 import { getRecursiveFiles, getRecursiveDirectories, filenameToTitle } from './utils';
+import fs from 'fs-extra';
 
 export type MarkdownFile = {
 	name: string;
@@ -94,4 +95,23 @@ export function categories(): string[] {
 			return acc;
 		}, categories)
 	).map((dir) => path.basename(dir));
+}
+
+export function publishPost(post: MarkdownFile): void {
+	const { draftsPath, publicPath } = preferences();
+
+	if (!post.path.startsWith(draftsPath)) {
+		throw new Error(`Cannot publish post that is not in drafts directory`);
+	}
+
+	const newPostPath = post.path.replace(draftsPath, publicPath);
+
+	// Set the current date in the post content.
+	const content = fs.readFileSync(post.path, 'utf8');
+	const today = new Date().toISOString().split('T')[0];
+	const updatedContent = content.replace(/^date:.*$/gim, `date: ${today}`);
+
+	fs.ensureDirSync(path.dirname(newPostPath));
+	fs.writeFileSync(newPostPath, updatedContent);
+	fs.unlinkSync(post.path);
 }
